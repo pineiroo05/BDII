@@ -309,7 +309,7 @@ INSERT into CLIENTE (ID_CLIENTE, NOMBRE, TELEFONO) values ('em001', 'Empresa', 9
 INSERT into EMPRESA (ID_CLIENTE, NIF, NOMBREEMPRESA) values ('em001', 'B87654321', 'Empresa abc');
 
 --Envio y paquetes--
-INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('abc123', '123ab', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'En camino');
+INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('abc123', 'cl001', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'En camino');
 INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (1, 'abc123', 1000, 'Material peligroso');
 
 --Ejecucion y ejecucion conductor--
@@ -374,4 +374,5 @@ FROM EJECUCION_CONDUCTOR;
 -- 18. SUPERVISA
 SELECT *
 FROM SUPERVISA;
+
 
