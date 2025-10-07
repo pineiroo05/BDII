@@ -207,27 +207,28 @@ CREATE TABLE SUPERVISA
 );
 
 --CREACION DE VISTAS--
+
+--No actualizable pq daria errores al hacer el update, ya q el sgbd no sabe en q tabla hacer esa actualizacion
 CREATE OR REPLACE VIEW VISTA_CLIENTE_PERSONA AS 
-    SELECT C.ID_CLIENTE, C.NOMBRE, C.TELEFONO, P.DNI, P.NOMBRE_COMPLETO
+    SELECT C.ID_CLIENTE, C.NOMBRE, C.TELEFONO AS TELEFONO, P.DNI AS DNI_PERSONA, P.NOMBRE_COMPLETO AS NOMBRE_COMPLETO
     FROM CLIENTE C, PERSONA P
     WHERE C.ID_CLIENTE = P.ID_CLIENTE;
 
+UPDATE VISTA_CLIENTE_PERSONA
+SET TELEFONO = '987654321' 
+WHERE DNI_PERSONA = '12345678';
 
-CREATE OR REPLACE VIEW VISTA_EMPLEADO_CONDUCTOR AS
-    SELECT E.ID_EMPLEADO, E.TELEFONO, E.NOMBRE_COMPLETO, E.NSS, E.DNI, C.LICENCIA, C.HORAS_SEMANA
-    FROM EMPLEADO E, CONDUCTOR C
-    WHERE E.ID_EMPLEADO = C.ID_EMPLEADO;
+--Actualizable pq en este caso ya seria capaz de hacer esa actualizacio, pq esta trabajando solo con una tabla
+CREATE OR REPLACE VIEW VISTA_CLIENTE AS
+    SELECT ID_CLIENTE, C.NOMBRE, C.TELEFONO
+    FROM CLIENTE
+    WHERE ID_CLIENTE = 'cl001';
 
---Son actualizables pq por ej, sobre los clientes puedo hacer actualizaciones facilmente sin q haya problemas de q la bd no sepa donde hacerlos (con empleado y conductor igual).
+UPDATE VISTA_CLIENTE
+SET TELEFONO = '987654321'
+WHERE ID_CLIENTE = 'cl001';
 
-CREATE OR REPLACE VIEW VISTA_EJECUCION AS
-    SELECT E.ID_EJECUCION, E.FECHA_EJECUCION, E.ID_VEHICULO, E.ID_RUTA, EC.ID_EMPLEADO
-    FROM EJECUCION E, VEHICULO V, EMPLEADO EM, RUTA R, EJECUCION_CONDUCTOR EC
-    WHERE E.ID_VEHICULO = V.ID_VEHICULO AND E.ID_RUTA = R.ID_RUTA AND E.ID_EJECUCION = EC.ID_EJECUCION AND EC.ID_EMPLEADO = EM.ID_EMPLEADO;
-
---No seria actualizable pq al hacer una actualizacion de cualquier tipo, la bd tendria q trabajar con 5 tablas diferentes, lo q hace que los insert (p.ej) sean complicados, ya q no sabemos donde hacerlo primero.
-
---CREACION INDICES--
+--INDICES--
 CREATE INDEX IND_EMPLEADO_DNI ON EMPLEADO (DNI);
 SELECT *
 FROM EMPLEADO
@@ -375,6 +376,7 @@ FROM EJECUCION_CONDUCTOR;
 -- 18. SUPERVISA
 SELECT *
 FROM SUPERVISA;
+
 
 
 
