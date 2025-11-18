@@ -218,6 +218,7 @@ SET TELEFONO = '987654321'
 WHERE DNI_PERSONA = '12345678';
 
 --Actualizable pq en este caso ya seria capaz de hacer esa actualizacio, pq esta trabajando solo con una tabla
+--REVISAR ESTA VISTA--
 CREATE OR REPLACE VIEW VISTA_CLIENTE AS
     SELECT ID_CLIENTE, C.NOMBRE, C.TELEFONO
     FROM CLIENTE
@@ -246,7 +247,7 @@ WHERE HORAS_SEMANA > 40;
 CREATE INDEX IND_FECHA ON ENVIO (FECHA);
 SELECT *
 FROM ENVIO
-WHERE FECHA BETWEEN TO_DATE('2024-12-12', 'YYYY-MM-DD') AND TO_DATE('2025-01-12', YYYY-MM-DD');
+WHERE FECHA BETWEEN TO_DATE('2024-12-12', 'YYYY-MM-DD') AND TO_DATE('2025-01-12', YYYY-MM-DD);
 
 CREATE INDEX IND_ESTADO ON ENVIO (ESTADO);
 SELECT *
@@ -266,20 +267,48 @@ WHERE ID_VEHICULO = 'cam1a' AND ID_RUTA = 'ruta1a';
 --INSERTS--
 
 --Insert para empleado conductor 1--
-INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('1a2b3c', 111222333, 'Juanito Fernandez Lopez', '12345678901', '12345678a');
-INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('1a2b3c', 'C1', 45);
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('1a1b1c', 111111111, 'Juanito Fernandez Lopez', '11111111111', '11111111a');
+INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('1a1b1c', 'C1', 45);
 --Insert para empleado conductor 2--
-INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('2a2b2c', 123456789, 'Alvarito Perez Gomez', '12345678901', '12345678a');
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('2a2b2c', 222222222, 'Alvarito Perez Gomez', '22222222222', '22222222a');
 INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('2a2b2c', 'C1', 50);
 --Insert para empleado conductor 3--
-INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('3a3b3c', 987654321, 'Manolito Sanchez Lopez', '12345678901', '12345678a');
-INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('3a3b3c', 'C1', 44);
---Insert para mecanico--
-INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('2b1a3c', 444555666, 'Pepito Gonzalez Lopez', '10987654321', '87654321b');
-INSERT into MECANICO (ID_EMPLEADO, ESPECIALIDAD) values ('2b1a3c', 'Carroceria');
---Insert para administrativo--
-INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('3c2b1a', 777888999, 'Menganito Martinez Lopez', '20987654321', '1357248c');
-INSERT into ADMINISTRATIVO (ID_EMPLEADO, DEPARTAMENTO) values ('3c2b1a', 'Contabilidad');
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('3a3b3c', 333333333, 'Manolito Sanchez Lopez', '33333333333', '33333333a');
+INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('3a3b3c', 'C1', 35);
+--Insert para empleado conductor 4--
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('4a4b4c', 444444444, 'Pedro Perez Lopez', '44444444444', '44444444a');
+INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('4a4b4c', 'C1', 40);
+--Insert para empleado conductor 5--
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('5a5b5c', 555555555, 'Fernando Fernandez Fernandez', '55555555555', '55555555a');
+INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('5a5b5c', 'C1', 49);
+--Insert para empleado conductor 6--
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('6a6b6c', 666666666, 'Gonzalo Gonzalez Gonzalez', '66666666666', '66666666a');
+INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('6a6b6c', 'C1', 48);
+--Insert para empleado conductor 7--
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('7a7b7c', 777777777, 'Marta Martinez Martinez', '77777777777', '77777777a');
+INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('7a7b7c', 'C1', 50);
+--Insert para empleado conductor 8--
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('8a8b8c', 888888888, 'Jose Perez Perez', '88888888888', '88888888a');
+INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('8a8b8c', 'C1', 46);
+--Insert para empleado conductor 9--
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('9a9b9c', 999999999, 'Manolito Sanchez Sanchez', '99999999999', '99999999a');
+INSERT into CONDUCTOR (ID_EMPLEADO, LICENCIA, HORAS_SEMANA) values ('9a9b9c', 'C1', 44);
+--Insert para mecanicos (Tienen horas por defecto)--
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('1b1a1c', 121212121, 'Pepito Gonzalez Lopez', '12121212121', '12121212b');
+INSERT into MECANICO (ID_EMPLEADO, ESPECIALIDAD) values ('1b1a1c', 'Carroceria');
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('2b2a2c', 232323232, 'Tomas Gonzalez Rodriguez', '23232323232', '23232323b');
+INSERT into MECANICO (ID_EMPLEADO, ESPECIALIDAD) values ('2b2a2c', 'Mecanica');
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('3b3a3c', 343434343, 'Juan Perez Lopez', '34343434343', '34343434b');
+INSERT into MECANICO (ID_EMPLEADO, ESPECIALIDAD) values ('3b3a3c', 'Electronica');
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('4b4a4c', 454545454, 'Luis Lopez Lopez', '45454545454', '45454545b');
+INSERT into MECANICO (ID_EMPLEADO, ESPECIALIDAD) values ('4b4a4c', 'Mecanica');
+--Insert para administrativos (Tienen horas por defecto)--
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('1c1b1a', 212121212, 'Menganito Martinez Lopez', '20987654321', '11111111c');
+INSERT into ADMINISTRATIVO (ID_EMPLEADO, DEPARTAMENTO) values ('1c1b1a', 'Contabilidad');
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('2c2b2a', 323232323, 'Fulanito Martinez Lopez', '20987654323', '22222222c');
+INSERT into ADMINISTRATIVO (ID_EMPLEADO, DEPARTAMENTO) values ('2c2b2a', 'Trafico');
+INSERT into EMPLEADO (ID_EMPLEADO, TELEFONO, NOMBRE_COMPLETO, NSS, DNI) values ('3c3b3a', 434343434, 'Pepito Martinez Lopez', '20987654324', '33333333c');
+INSERT into ADMINISTRATIVO (ID_EMPLEADO, DEPARTAMENTO) values ('3c3b3a', 'Secretario');
 
 --Vehiculo "normal" sin conductor asignado--
 INSERT into GPS (ID_GPS, MODELO, NUM_SERIE) values ('gps1', 'modelo300', '123abc');
@@ -312,11 +341,22 @@ INSERT into EMPRESA (ID_CLIENTE, NIF, NOMBREEMPRESA) values ('em001', 'B87654321
 --Envio y paquetes--
 INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('abc123', 'cl001', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'En camino');
 INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (1, 'abc123', 1000, 'Material peligroso');
+INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('abc124', 'cl001', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'Pendiente');
+INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (2, 'abc124', 100, 'Material peligroso');
+INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('abc125', 'cl001', TO_DATE('2025-01-01', 'YYYY-MM-DD'), 'En camino');
+INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (3, 'abc125', 500, 'Material peligroso');
+INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('abc126', 'cl001', TO_DATE('2025-06-10', 'YYYY-MM-DD'), 'En camino');
+INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (4, 'abc126', 60, 'Material peligroso');
 
 --Ejecucion y ejecucion conductor--
-INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('987zy', TO_DATE('2025-10-9', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
-INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('987zy', '1a2b3c');
-
+INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('987zy', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
+INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('987zy', '1a1b1c');
+INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('765zy', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
+INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('987zy', '1a1b1c');
+INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('543zy', TO_DATE('2025-01-01', 'YYYY-MM-DD'), 'cam3a', 'ruta1a');
+INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('987zy', '1a1b1c');
+INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('321zy', TO_DATE('2025-06-10', 'YYYY-MM-DD'), 'cam4a', 'ruta1a');
+INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('987zy', '1a1b1c');
 --Supervisa--
 INSERT into SUPERVISA (ID_EMPLEADO_SUPERVISADO, ID_EMPLEADO_SUPERVISOR) values ('2a2b2c', '1a2b3c');
 
@@ -378,10 +418,21 @@ FROM SUPERVISA;
 
 
 
+--Entrega 3--
+/*Cursores: cogen todos los datos de una fila, y va tratandolos de uno en uno.
+-Recomendado al procesar registros uno a uno.
+-Hacer operaciones complejas.
+-Me dan mas control sobre la ejecucion de una consultas.
+-Utiles cuando hay que hacer op complejas, que no podemos hacer en una sola consulta sql.
+*/
 
-
-
-
-
-
+/*
+IDEAS
+-Funcion para obtener las horas totales de todos los empleados.
+-Funcion para listar vehiculos con entregas asignadas.
+-Procedimiento para actualizar el estado de un envio a entregado.
+-Funcion para obtener la cantidad total de paquetes entregados a un cliente.
+-Procedimiento para asignar un conductor a un vehiculo.
+-Procedimiento para registrar una ejecucion de un vehiculo en una ruta.
+*/
 
