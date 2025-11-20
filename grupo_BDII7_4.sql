@@ -445,8 +445,6 @@ BEGIN
 	Horas_Totales := Horas_Totales + n_mecanicos*40 + n_administrativos*40;
 	DBMS_OUTPUT.PUT_LINE('Horas totales: ' || Horas_Totales);
 
-EXCEPTION
-
 END;
 
 --Entrega 3--
@@ -466,6 +464,7 @@ IDEAS
 -Procedimiento para asignar un conductor a un vehiculo.
 -Procedimiento para registrar una ejecucion de un vehiculo en una ruta.
 */
+
 
 
 
