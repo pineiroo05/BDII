@@ -419,19 +419,22 @@ FROM SUPERVISA;
 --PROCEDIMIENTOS/FUNCIONES DE PL-SQL
 
 DECLARE
-	Horas_Totales NUMBER%type;
+	Horas_Totales      NUMBER(8) := 0;
+    v_horas            NUMBER(8);
+    n_mecanicos        NUMBER(8);
+    n_administrativos  NUMBER(8);
 
 	CURSOR c_h_conductores IS
 		SELECT COALESCE(HORAS_SEMANA,0) 
 		FROM CONDUCTOR;
-		
+
+BEGIN
 	SELECT COUNT(*) INTO n_mecanicos
 		FROM MECANICO;
 
 	SELECT COUNT(*) INTO n_administrativos
 		FROM ADMINISTRATIVO;
 
-BEGIN
 	OPEN c_h_conductores;
 	LOOP
 		FETCH c_h_conductores into v_horas;
@@ -463,5 +466,6 @@ IDEAS
 -Procedimiento para asignar un conductor a un vehiculo.
 -Procedimiento para registrar una ejecucion de un vehiculo en una ruta.
 */
+
 
 
