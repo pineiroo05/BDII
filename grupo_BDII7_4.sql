@@ -418,7 +418,7 @@ FROM SUPERVISA;
 
 --PROCEDIMIENTOS/FUNCIONES DE PL-SQL
 
-DECLARE
+CREATE OR REPLACE FUNCTION calcular_horas_totales RETURN NUMBER IS
 	Horas_Totales      NUMBER(8) := 0;
     v_horas            NUMBER(8);
     n_mecanicos        NUMBER(8);
@@ -464,6 +464,7 @@ IDEAS
 -Procedimiento para asignar un conductor a un vehiculo.
 -Procedimiento para registrar una ejecucion de un vehiculo en una ruta.
 */
+
 
 
 
