@@ -446,6 +446,8 @@ BEGIN
 END CalcularHorasTotales;
 
 CREATE OR REPLACE FUNCTION ObtenerCantidadEntregadaClientes(v_id_cliente in VARCHAR) RETURN NUMBER IS
+	n_clientes NUMBER(5);
+	v_entregas_cliente NUMBER(6);
 BEGIN
 	SELECT COUNT(*) INTO n_clientes
 	FROM CLIENTE
@@ -464,7 +466,7 @@ EXCEPTION
 		RAISE_APPLICATION_ERROR(-20001, 'La ID_Cliente que has puesto no existe, espabila');
 	WHEN OTHERS THEN
 		RAISE;
-END ObtenerCantidadEntregadaClientes
+END ObtenerCantidadEntregadaClientes;
 	
 
 
@@ -485,6 +487,7 @@ IDEAS
 -Procedimiento para asignar un conductor a un vehiculo.
 -Procedimiento para registrar una ejecucion de un vehiculo en una ruta.
 */
+
 
 
 
