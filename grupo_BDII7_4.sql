@@ -418,7 +418,7 @@ FROM SUPERVISA;
 
 --PROCEDIMIENTOS/FUNCIONES DE PL-SQL
 
-CREATE OR REPLACE FUNCTION calcular_horas_totales RETURN NUMBER IS
+CREATE OR REPLACE FUNCTION CalcularHorasTotales RETURN NUMBER IS
 	Horas_Totales      NUMBER(8) := 0;
     v_horas            NUMBER(8);
     n_mecanicos        NUMBER(8);
@@ -427,7 +427,6 @@ CREATE OR REPLACE FUNCTION calcular_horas_totales RETURN NUMBER IS
 	CURSOR c_h_conductores IS
 		SELECT COALESCE(HORAS_SEMANA,0) 
 		FROM CONDUCTOR;
-
 BEGIN
 	SELECT COUNT(*) INTO n_mecanicos
 		FROM MECANICO;
@@ -437,15 +436,37 @@ BEGIN
 
 	OPEN c_h_conductores;
 	LOOP
-		FETCH c_h_conductores into v_horas;
+		FETCH c_h_conductores INTO v_horas;
 		EXIT WHEN c_h_conductores%NOTFOUND;
 		Horas_Totales := Horas_Totales + v_horas;
 	END LOOP;
 	CLOSE c_h_conductores;
 	Horas_Totales := Horas_Totales + n_mecanicos*40 + n_administrativos*40;
-	DBMS_OUTPUT.PUT_LINE('Horas totales: ' || Horas_Totales);
+	RETURN Horas_Totales
+END CalcularHorasTotales;
 
-END;
+CREATE OR REPLACE FUNCTION ObtenerCantidadEntregadaClientes(v_id_cliente in VARCHAR) RETURN NUMBER IS
+BEGIN
+	SELECT COUNT(*) INTO n_clientes
+	FROM CLIENTE
+	WHERE v_id_clientes = ID_CLIENTE
+
+	IF (n_clientes = 0) THEN
+		RAISE ID_INVALIDO_EXCEPTION;
+	END IF;
+
+	SELECT COUNT(*) INTO v_entregas_cliente
+	FROM CLIENTE C INNER JOIN ENVIO E ON C.ID_CLIENTE = E.ID_CLIENTE
+	WHERE E.ESTADO = 'Entregado' AND C.ID_CLIENTE =  v_id_cliente 
+	RETURN v_entregas_cliente
+EXCEPTION 
+	WHEN ID_INVALIDO_EXCEPTION 
+		RAISE_APPLICATION_ERROR(-20001, 'La ID_Cliente que has puesto no existe, espabila');
+	WHEN OTHERS THEN
+		RAISE;
+END ObtenerCantidadEntregadaClientes
+	
+
 
 --Entrega 3--
 /*Cursores: cogen todos los datos de una fila, y va tratandolos de uno en uno.
@@ -458,12 +479,13 @@ END;
 /*
 IDEAS
 -Funcion para obtener las horas totales de todos los empleados.
--Funcion para listar vehiculos con entregas asignadas.
--Procedimiento para actualizar el estado de un envio a entregado.
 -Funcion para obtener la cantidad total de paquetes entregados a un cliente.
+-Procedimiento para listar vehiculos con entregas asignadas.
+-Procedimiento para actualizar el estado de un envio a entregado.
 -Procedimiento para asignar un conductor a un vehiculo.
 -Procedimiento para registrar una ejecucion de un vehiculo en una ruta.
 */
+
 
 
 
