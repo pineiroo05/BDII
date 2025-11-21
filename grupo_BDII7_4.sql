@@ -315,7 +315,7 @@ INSERT into GPS (ID_GPS, MODELO, NUM_SERIE) values ('gps1', 'modelo300', '123abc
 INSERT into VEHICULO (ID_VEHICULO, ID_GPS, ID_EMPLEADO, MATRICULA, CAPACIDAD_KG) values ('cam1a', 'gps1', NULL, '1234ABC', 7400);
 --Vehiculo "normal" con conductor asignado--
 INSERT into GPS (ID_GPS, MODELO, NUM_SERIE) values ('gps2', 'modelo300', '456abc');
-INSERT into VEHICULO (ID_VEHICULO, ID_GPS, ID_EMPLEADO, MATRICULA, CAPACIDAD_KG) values ('cam2a', 'gps2', '1a2b3c', '1234CBA', 7400);
+INSERT into VEHICULO (ID_VEHICULO, ID_GPS, ID_EMPLEADO, MATRICULA, CAPACIDAD_KG) values ('cam2a', 'gps2', '1a1b1c', '1234CBA', 7400);
 --Vehiculo adr--
 INSERT into GPS (ID_GPS, MODELO, NUM_SERIE) values ('gps3', 'modelo300', '789abc');
 INSERT into VEHICULO (ID_VEHICULO, ID_GPS, ID_EMPLEADO, MATRICULA, CAPACIDAD_KG) values ('cam3a', 'gps3', '2a2b2c', '1234DCB', 7400);
@@ -352,7 +352,7 @@ INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (4, 'abc126', 
 INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('987zy', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
 INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('987zy', '1a1b1c');
 INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('765zy', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
-INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('756zy', '2a2b2c');
+INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('765zy', '2a2b2c');
 INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('543zy', TO_DATE('2025-01-01', 'YYYY-MM-DD'), 'cam3a', 'ruta1a');
 INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('543zy', '1a1b1c');
 INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('321zy', TO_DATE('2025-06-10', 'YYYY-MM-DD'), 'cam4a', 'ruta1a');
@@ -487,6 +487,7 @@ IDEAS
 -Procedimiento para asignar un conductor a un vehiculo.
 -Procedimiento para registrar una ejecucion de un vehiculo en una ruta.
 */
+
 
 
 
