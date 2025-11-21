@@ -338,25 +338,19 @@ INSERT into PERSONA (ID_CLIENTE, DNI, NOMBRE_COMPLETO) values ('cl001', '8765432
 INSERT into CLIENTE (ID_CLIENTE, NOMBRE, TELEFONO) values ('em001', 'Empresa', 987123456);
 INSERT into EMPRESA (ID_CLIENTE, NIF, NOMBREEMPRESA) values ('em001', 'B87654321', 'Empresa abc');
 
---Envio y paquetes--
-INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('abc123', 'cl001', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'En camino');
-INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (1, 'abc123', 1000, 'Material peligroso');
-INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('abc124', 'cl001', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'Pendiente');
-INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (2, 'abc124', 100, 'Material peligroso');
-INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('abc125', 'cl001', TO_DATE('2025-01-01', 'YYYY-MM-DD'), 'En camino');
-INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (3, 'abc125', 500, 'Material peligroso');
-INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('abc126', 'cl001', TO_DATE('2025-06-10', 'YYYY-MM-DD'), 'En camino');
-INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (4, 'abc126', 60, 'Material peligroso');
+-- Ejecución 1: Envio 'ejec1' transportado en Ejecución 'ejec1' por 'cam2a'
+INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('ejec1', 'cl001', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'En camino');
+INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (1, 'ejec1', 1000, 'Material peligroso');
+INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('ejec1', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
+INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('ejec1', '1a1b1c');
 
---Ejecucion y ejecucion conductor--
-INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('987zy', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
-INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('987zy', '1a1b1c');
-INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('765zy', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
-INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('765zy', '2a2b2c');
-INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('543zy', TO_DATE('2025-01-01', 'YYYY-MM-DD'), 'cam3a', 'ruta1a');
-INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('543zy', '1a1b1c');
-INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('321zy', TO_DATE('2025-06-10', 'YYYY-MM-DD'), 'cam4a', 'ruta1a');
-INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('321zy', '2a2b2c');
+-- Ejecución 2: Envio 'ejec2' transportado en Ejecución 'ejec2' por 'cam2a'
+-- NOTA: Este envío debe tener estado 'Entregado' o 'En camino' para aparecer en las funciones. 
+-- Lo dejo en 'Pendiente' para que funcione la prueba de 'ObtenerCantidadEntregada'.
+INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('ejec2', 'cl001', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'Pendiente');
+INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (1, 'ejec2', 100, 'Material peligroso');
+INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('ejec2', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
+INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('ejec2', '2a2b2c');
 --Supervisa--
 INSERT into SUPERVISA (ID_EMPLEADO_SUPERVISADO, ID_EMPLEADO_SUPERVISOR) values ('2a2b2c', '1a2b3c');
 
@@ -487,6 +481,7 @@ IDEAS
 -Procedimiento para asignar un conductor a un vehiculo.
 -Procedimiento para registrar una ejecucion de un vehiculo en una ruta.
 */
+
 
 
 
