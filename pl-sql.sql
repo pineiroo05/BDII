@@ -12,10 +12,8 @@ CREATE OR REPLACE FUNCTION CalcularHorasTotales RETURN NUMBER IS
 BEGIN
 	SELECT COUNT(*) INTO n_mecanicos
 		FROM MECANICO;
-
 	SELECT COUNT(*) INTO n_administrativos
 		FROM ADMINISTRATIVO;
-
 	OPEN c_h_conductores;
 	LOOP
 		FETCH c_h_conductores INTO v_horas;
@@ -32,22 +30,19 @@ CREATE OR REPLACE FUNCTION ObtenerCantidadEntregada(v_id_cliente IN VARCHAR2) RE
     ID_INVALIDO_EXCEPTION EXCEPTION;
 	n_clientes NUMBER(5);
 	v_entregas_cliente NUMBER(6):=0;
-    
-    CURSOR c_entregas IS
+    /*CURSOR c_entregas IS
         SELECT E.ID_ENVIO
         FROM CLIENTE C
         JOIN ENVIO E ON C.ID_CLIENTE = E.ID_CLIENTE
         WHERE C.ID_CLIENTE = v_id_cliente
-          AND E.ESTADO = 'Entregado';
+          AND E.ESTADO = 'Entregado';*/
 BEGIN
 	SELECT COUNT(*) INTO n_clientes
 	FROM CLIENTE
 	WHERE ID_CLIENTE = v_id_cliente;
-
 	IF (n_clientes = 0) THEN
 		RAISE ID_INVALIDO_EXCEPTION;
 	END IF;
-
 	SELECT COUNT(*) INTO v_entregas_cliente
 	FROM CLIENTE C INNER JOIN ENVIO E ON C.ID_CLIENTE = E.ID_CLIENTE
 	WHERE E.ESTADO = 'Entregado' AND C.ID_CLIENTE =  v_id_cliente; 
@@ -66,13 +61,21 @@ CREATE OR REPLACE PROCEDURE ListarVehiculosConEntregas IS
         FROM VEHICULO V
         JOIN EJECUCION EJ ON V.ID_VEHICULO = EJ.ID_VEHICULO
         JOIN ENVIO E ON EJ.ID_EJECUCION = E.ID_ENVIO;
+    v_id_vehiculo VEHICULO.ID_VEHICULO%TYPE;
+    v_id_envio ENVIO.ID_ENVIO%TYPE;
+    v_estado ENVIO.ESTADO%TYPE;
 BEGIN
-    FOR reg IN c_veh LOOP
+    OPEN c_veh;
+    LOOP
+        FETCH c_veh INTO v_id_vehiculo, v_id_envio, v_estado;
+        EXIT WHEN c_veh%NOTFOUND;
+        
         DBMS_OUTPUT.PUT_LINE(
-            'VehÃ­culo: ' || reg.ID_VEHICULO ||
-            ' | EnvÃ­o: ' || reg.ID_ENVIO ||
-            ' | Estado: ' || reg.ESTADO);
+            'Vehículo: ' || v_id_vehiculo ||
+            ' | Envío: ' || v_id_envio ||
+            ' | Estado: ' || v_estado);
     END LOOP;
+    CLOSE c_veh;
 END ListarVehiculosConEntregas;
 /
 
@@ -82,43 +85,86 @@ CREATE OR REPLACE PROCEDURE ActualizarEnvioAEntregado(p_id_envio VARCHAR2) IS
         FROM ENVIO
         WHERE ID_ENVIO = p_id_envio
         FOR UPDATE;
+    v_estado_actual ENVIO.ESTADO%TYPE;
 BEGIN
-    FOR reg IN c_envio LOOP
+    OPEN c_envio;
+    FETCH c_envio INTO v_estado_actual;
+    IF c_envio%FOUND THEN 
         UPDATE ENVIO
         SET ESTADO = 'Entregado'
-        WHERE ID_ENVIO = p_id_envio;
-    END LOOP;
+        WHERE CURRENT OF c_envio;
+    ELSE
+        RAISE_APPLICATION_ERROR(-20008, 'El ID de envío ' || p_id_envio || ' no existe.');
+    END IF;
+    CLOSE c_envio;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
 END ActualizarEnvioAEntregado;
 /
 
 
-CREATE OR REPLACE PROCEDURE AsignarConductorAVehiculo(p_id_vehiculo  VARCHAR2, p_id_conductor VARCHAR2) IS
+CREATE OR REPLACE PROCEDURE AsignarConductorAVehiculo(p_id_vehiculo VARCHAR2, p_id_conductor VARCHAR2) IS
     CURSOR c_veh IS
         SELECT ID_EMPLEADO
         FROM VEHICULO
         WHERE ID_VEHICULO = p_id_vehiculo
         FOR UPDATE;
+    v_id_empleado_actual VEHICULO.ID_EMPLEADO%TYPE;
 BEGIN
-    FOR reg IN c_veh LOOP
+    OPEN c_veh;
+    FETCH c_veh INTO v_id_empleado_actual;
+    IF c_veh%FOUND THEN
         UPDATE VEHICULO
         SET ID_EMPLEADO = p_id_conductor
-        WHERE ID_VEHICULO = p_id_vehiculo;
-    END LOOP;
+        WHERE CURRENT OF c_veh;
+    ELSE
+        RAISE_APPLICATION_ERROR(-20009, 'El ID de vehículo ' || p_id_vehiculo || ' no existe.');
+    END IF;
+    CLOSE c_veh;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
 END AsignarConductorAVehiculo;
 /
 
-CREATE OR REPLACE PROCEDURE RegistrarEjecucionRuta(p_id_ejecucion VARCHAR2, p_fecha DATE, p_id_vehiculo VARCHAR2, p_id_ruta VARCHAR2) IS
-    ID_EJECUCION_EXCEPTION EXCEPTION;
-    CURSOR c_verif IS
-        SELECT ID_VEHICULO
-        FROM VEHICULO
-        WHERE ID_VEHICULO = p_id_vehiculo
-        FOR UPDATE;
+CREATE OR REPLACE PROCEDURE RegistrarEjecucionRuta(
+    p_id_ejecucion IN VARCHAR2, 
+    p_fecha IN DATE, 
+    p_id_vehiculo IN VARCHAR2, 
+    p_id_ruta IN VARCHAR2
+) IS
+    v_vehiculo_existe NUMBER := 0;
+    v_ruta_existe NUMBER := 0;
+    -- Cursor para verificar la existencia del vehículo
+    CURSOR c_verif_vehiculo IS
+        SELECT 1 FROM VEHICULO WHERE ID_VEHICULO = p_id_vehiculo;
+    -- Cursor para verificar la existencia de la ruta
+    CURSOR c_verif_ruta IS
+        SELECT 1 FROM RUTA WHERE ID_RUTA = p_id_ruta;
 BEGIN
-    FOR reg IN c_verif LOOP
-        INSERT INTO EJECUCION(ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA)
-        VALUES (p_id_ejecucion, p_fecha, p_id_vehiculo, p_id_ruta);
-    END LOOP;
+    -- Verificar existencia del vehículo con cursor
+    OPEN c_verif_vehiculo;
+    FETCH c_verif_vehiculo INTO v_vehiculo_existe;
+    CLOSE c_verif_vehiculo;
+    IF v_vehiculo_existe = 0 THEN
+        RAISE_APPLICATION_ERROR(-20010, 'Error: El vehículo ' || p_id_vehiculo || ' no existe.');
+    END IF;
+    -- Verificar existencia de la ruta con cursor
+    OPEN c_verif_ruta;
+    FETCH c_verif_ruta INTO v_ruta_existe;
+    CLOSE c_verif_ruta;
+    IF v_ruta_existe = 0 THEN
+        RAISE_APPLICATION_ERROR(-20011, 'Error: La ruta ' || p_id_ruta || ' no existe.');
+    END IF;
+    -- Si ambos existen, realizar la inserción
+    INSERT INTO EJECUCION(ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA)
+    VALUES (p_id_ejecucion, p_fecha, p_id_vehiculo, p_id_ruta);
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Error: La ID de Ejecución ' || p_id_ejecucion || ' ya existe.');
+    WHEN OTHERS THEN
+        RAISE;
 END RegistrarEjecucionRuta;
 /
 
@@ -206,8 +252,8 @@ BEGIN
         ListarVehiculosConEntregas;
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÃ“N ListarVehiculosConEntregas]');
-            DBMS_OUTPUT.PUT_LINE('CÃ³digo: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÓN ListarVehiculosConEntregas]');
+            DBMS_OUTPUT.PUT_LINE('Código: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
     END;
     DBMS_OUTPUT.PUT_LINE('== FIN PROCEDIMIENTO: ListarVehiculosConEntregas ==');
     DBMS_OUTPUT.NEW_LINE;
@@ -217,18 +263,18 @@ BEGIN
     -------------------------------
     DBMS_OUTPUT.PUT_LINE('== INICIO PROCEDIMIENTO: ActualizarEnvioAEntregado ==');
     BEGIN
-        ActualizarEnvioAEntregado('abc124');
+        ActualizarEnvioAEntregado('ejec1');
         BEGIN
-            SELECT ESTADO INTO v_estado FROM ENVIO WHERE ID_ENVIO = 'abc124';
-            DBMS_OUTPUT.PUT_LINE('Estado actualizado para abc124: ' || v_estado);
+            SELECT ESTADO INTO v_estado FROM ENVIO WHERE ID_ENVIO = 'ejec1';
+            DBMS_OUTPUT.PUT_LINE('Estado actualizado para ejec1: ' || v_estado);
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
-                DBMS_OUTPUT.PUT_LINE('No existe el envÃ­o abc124');
+                DBMS_OUTPUT.PUT_LINE('No existe el envío ejec1');
         END;
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÃ“N ActualizarEnvioAEntregado]');
-            DBMS_OUTPUT.PUT_LINE('CÃ³digo: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÓN ActualizarEnvioAEntregado]');
+            DBMS_OUTPUT.PUT_LINE('Código: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
     END;
     DBMS_OUTPUT.PUT_LINE('== FIN PROCEDIMIENTO: ActualizarEnvioAEntregado ==');
     DBMS_OUTPUT.NEW_LINE;
@@ -244,12 +290,12 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('Conductor asignado a cam1a: ' || v_conductor);
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
-                DBMS_OUTPUT.PUT_LINE('No existe el vehÃ­culo cam1a');
+                DBMS_OUTPUT.PUT_LINE('No existe el vehículo cam1a');
         END;
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÃ“N AsignarConductorAVehiculo]');
-            DBMS_OUTPUT.PUT_LINE('CÃ³digo: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÓN AsignarConductorAVehiculo]');
+            DBMS_OUTPUT.PUT_LINE('Código: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
     END;
     DBMS_OUTPUT.PUT_LINE('== FIN PROCEDIMIENTO: AsignarConductorAVehiculo ==');
     DBMS_OUTPUT.NEW_LINE;
@@ -262,14 +308,14 @@ BEGIN
         RegistrarEjecucionRuta('222zy', TO_DATE('2025-12-01','YYYY-MM-DD'), 'cam2a', 'ruta1a');
         SELECT COUNT(*) INTO v_num FROM EJECUCION WHERE ID_EJECUCION = '222zy';
         IF v_num = 1 THEN
-            DBMS_OUTPUT.PUT_LINE('EjecuciÃ³n registrada correctamente: 111zy');
+            DBMS_OUTPUT.PUT_LINE('Ejecución registrada correctamente: 111zy');
         ELSE
-            DBMS_OUTPUT.PUT_LINE('Error al registrar ejecuciÃ³n 111zy');
+            DBMS_OUTPUT.PUT_LINE('Error al registrar ejecución 111zy');
         END IF;
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÃ“N RegistrarEjecucionRuta]');
-            DBMS_OUTPUT.PUT_LINE('CÃ³digo: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÓN RegistrarEjecucionRuta]');
+            DBMS_OUTPUT.PUT_LINE('Código: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
     END;
     DBMS_OUTPUT.PUT_LINE('== FIN PROCEDIMIENTO: RegistrarEjecucionRuta ==');
     DBMS_OUTPUT.NEW_LINE;
@@ -282,26 +328,26 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Horas totales de empleados: ' || v_num);
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÃ“N CalcularHorasTotales]');
-            DBMS_OUTPUT.PUT_LINE('CÃ³digo: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÓN CalcularHorasTotales]');
+            DBMS_OUTPUT.PUT_LINE('Código: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
     END;
 
     BEGIN
         v_num := ObtenerCantidadEntregada('cl001');
-        DBMS_OUTPUT.PUT_LINE('Cantidad de envÃ­os entregados para cl001: ' || v_num);
+        DBMS_OUTPUT.PUT_LINE('Cantidad de envíos entregados para cl001: ' || v_num);
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÃ“N ObtenerCantidadEntregada]');
-            DBMS_OUTPUT.PUT_LINE('CÃ³digo: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÓN ObtenerCantidadEntregada]');
+            DBMS_OUTPUT.PUT_LINE('Código: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
     END;
 
     BEGIN
         v_num := ObtenerCantPendienteClientes('cl001');
-        DBMS_OUTPUT.PUT_LINE('Cantidad de envÃ­os pendientes/en camino para cl001: ' || v_num);
+        DBMS_OUTPUT.PUT_LINE('Cantidad de envíos pendientes/en camino para cl001: ' || v_num);
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÃ“N ObtenerCantPendienteClientes]');
-            DBMS_OUTPUT.PUT_LINE('CÃ³digo: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÓN ObtenerCantPendienteClientes]');
+            DBMS_OUTPUT.PUT_LINE('Código: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
     END;
 
     BEGIN
@@ -309,45 +355,44 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Peso total transportado por cam2a: ' || v_num);
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÃ“N ObtenerPesoTotalVehiculo]');
-            DBMS_OUTPUT.PUT_LINE('CÃ³digo: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÓN ObtenerPesoTotalVehiculo]');
+            DBMS_OUTPUT.PUT_LINE('Código: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
     END;
 
     BEGIN
         v_num := VehiculoDisponible('cam1a', TO_DATE('2025-10-10','YYYY-MM-DD'));
         IF v_num = 1 THEN
-            DBMS_OUTPUT.PUT_LINE('cam1a estÃ¡ disponible el 2025-10-10');
+            DBMS_OUTPUT.PUT_LINE('cam1a está disponible el 2025-10-10');
         ELSE
-            DBMS_OUTPUT.PUT_LINE('cam21 NO estÃ¡ disponible el 2025-10-10');
+            DBMS_OUTPUT.PUT_LINE('cam21 NO está disponible el 2025-10-10');
         END IF;
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÃ“N VehiculoDisponible]');
-            DBMS_OUTPUT.PUT_LINE('CÃ³digo: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('[EXCEPCIÓN VehiculoDisponible]');
+            DBMS_OUTPUT.PUT_LINE('Código: ' || SQLCODE || ' Mensaje: ' || SQLERRM);
     END;
 
     -------------------------------
     -- PRUEBAS DE EXCEPCIONES
     -------------------------------
     BEGIN
-        DBMS_OUTPUT.PUT_LINE('== PRUEBA EXCEPCIÃ“N: Vehiculo no existe ==');
+        DBMS_OUTPUT.PUT_LINE('== PRUEBA EXCEPCIÓN: Vehiculo no existe ==');
         v_num := VehiculoDisponible('noExiste', SYSDATE);
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('Se capturÃ³ excepciÃ³n correctamente: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('Se capturó excepción correctamente: ' || SQLERRM);
     END;
 
     BEGIN
-        DBMS_OUTPUT.PUT_LINE('== PRUEBA EXCEPCIÃ“N: Cliente no existe ==');
+        DBMS_OUTPUT.PUT_LINE('== PRUEBA EXCEPCIÓN: Cliente no existe ==');
         v_num := ObtenerCantidadEntregada('noExiste');
     EXCEPTION
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('Se capturÃ³ excepciÃ³n correctamente: ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('Se capturó excepción correctamente: ' || SQLERRM);
     END;
 
 END;
 /
-
 
 
 
