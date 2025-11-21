@@ -345,8 +345,6 @@ INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) valu
 INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('ejec1', '1a1b1c');
 
 -- Ejecución 2: Envio 'ejec2' transportado en Ejecución 'ejec2' por 'cam2a'
--- NOTA: Este envío debe tener estado 'Entregado' o 'En camino' para aparecer en las funciones. 
--- Lo dejo en 'Pendiente' para que funcione la prueba de 'ObtenerCantidadEntregada'.
 INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('ejec2', 'cl001', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'Pendiente');
 INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (1, 'ejec2', 100, 'Material peligroso');
 INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('ejec2', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
@@ -481,6 +479,7 @@ IDEAS
 -Procedimiento para asignar un conductor a un vehiculo.
 -Procedimiento para registrar una ejecucion de un vehiculo en una ruta.
 */
+
 
 
 
