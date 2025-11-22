@@ -218,11 +218,10 @@ SET TELEFONO = '987654321'
 WHERE DNI_PERSONA = '12345678';
 
 --Actualizable pq en este caso ya seria capaz de hacer esa actualizacio, pq esta trabajando solo con una tabla
---REVISAR ESTA VISTA--
 CREATE OR REPLACE VIEW VISTA_CLIENTE AS
-    SELECT ID_CLIENTE, C.NOMBRE, C.TELEFONO
+    SELECT ID_CLIENTE, NOMBRE, TELEFONO
     FROM CLIENTE
-    WHERE ID_CLIENTE = 'cl001';
+    WHERE ID_CLIENTE IN (SELECT ID_CLIENTE FROM ENVIO WHERE ESTADO IN('Pendiente', 'En camino'));
 
 UPDATE VISTA_CLIENTE
 SET TELEFONO = '987654321'
@@ -338,13 +337,13 @@ INSERT into PERSONA (ID_CLIENTE, DNI, NOMBRE_COMPLETO) values ('cl001', '8765432
 INSERT into CLIENTE (ID_CLIENTE, NOMBRE, TELEFONO) values ('em001', 'Empresa', 987123456);
 INSERT into EMPRESA (ID_CLIENTE, NIF, NOMBREEMPRESA) values ('em001', 'B87654321', 'Empresa abc');
 
--- Ejecución 1: Envio 'ejec1' transportado en Ejecución 'ejec1' por 'cam2a'
+--Envio 'ejec1' transportado en Ejecución 'ejec1' por 'cam2a'
 INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('ejec1', 'cl001', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'En camino');
 INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (1, 'ejec1', 1000, 'Material peligroso');
 INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('ejec1', TO_DATE('2025-10-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
 INSERT into EJECUCION_CONDUCTOR (ID_EJECUCION, ID_EMPLEADO) values ('ejec1', '1a1b1c');
 
--- Ejecución 2: Envio 'ejec2' transportado en Ejecución 'ejec2' por 'cam2a'
+--Envio 'ejec2' transportado en Ejecución 'ejec2' por 'cam2a'
 INSERT into ENVIO (ID_ENVIO, ID_CLIENTE, FECHA, ESTADO) values ('ejec2', 'cl001', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'Pendiente');
 INSERT into PAQUETE (N_PAQUETE, ID_ENVIO, PESO, CONTENIDO) values (1, 'ejec2', 100, 'Material peligroso');
 INSERT into EJECUCION (ID_EJECUCION, FECHA_EJECUCION, ID_VEHICULO, ID_RUTA) values ('ejec2', TO_DATE('2025-11-10', 'YYYY-MM-DD'), 'cam2a', 'ruta1a');
