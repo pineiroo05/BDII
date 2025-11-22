@@ -135,12 +135,7 @@ EXCEPTION
 END AsignarConductorAVehiculo;
 /
 
-CREATE OR REPLACE PROCEDURE RegistrarEjecucionRuta(
-    p_id_ejecucion IN VARCHAR2, 
-    p_fecha IN DATE, 
-    p_id_vehiculo IN VARCHAR2, 
-    p_id_ruta IN VARCHAR2
-) IS
+CREATE OR REPLACE PROCEDURE RegistrarEjecucionRuta(p_id_ejecucion IN VARCHAR2, p_fecha IN DATE, p_id_vehiculo IN VARCHAR2, p_id_ruta IN VARCHAR2) IS
     v_vehiculo_existe NUMBER := 0;
     v_ruta_existe NUMBER := 0;
     -- Cursor para verificar la existencia del vehículo
@@ -400,6 +395,7 @@ BEGIN
 
 END;
 /
+
 
 
 
