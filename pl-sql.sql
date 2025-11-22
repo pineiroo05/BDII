@@ -140,7 +140,7 @@ CREATE OR REPLACE PROCEDURE RegistrarEjecucionRuta(p_id_ejecucion IN VARCHAR2, p
     v_ruta_existe NUMBER := 0;
     -- Cursor para verificar la existencia del vehículo
     CURSOR c_verif_vehiculo IS
-        SELECT 1 FROM VEHICULO WHERE ID_VEHICULO = p_id_vehiculo;
+        SELECT 1 FROM VEHICULO WHERE ID_VEHICULO = p_id_vehiculo; --si los id coinciden se coje 1
     -- Cursor para verificar la existencia de la ruta
     CURSOR c_verif_ruta IS
         SELECT 1 FROM RUTA WHERE ID_RUTA = p_id_ruta;
@@ -395,6 +395,7 @@ BEGIN
 
 END;
 /
+
 
 
 
