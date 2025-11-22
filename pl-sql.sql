@@ -222,16 +222,16 @@ BEGIN
     IF v_existe=0 THEN
         RAISE ID_VEHICULO_EXCEPTION;
     END IF;
-    --peso--
+    --esta libre?--
     SELECT COUNT(*) INTO v_cont
     FROM EJECUCION
     WHERE ID_VEHICULO = v_id_vehiculo
       AND FECHA_EJECUCION = v_fecha;
 
     IF v_cont > 0 THEN
-        RETURN 0;
+        RETURN 0; --vehiculo ocupado -> no esta libre
     ELSE
-        RETURN 1;
+        RETURN 1; -- vehiculo libre
     END IF;
 EXCEPTION
     WHEN ID_VEHICULO_EXCEPTION THEN
@@ -395,6 +395,7 @@ BEGIN
 
 END;
 /
+
 
 
 
