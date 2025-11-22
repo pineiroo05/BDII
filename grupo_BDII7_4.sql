@@ -33,6 +33,16 @@ DROP INDEX IND_FECHA;
 DROP INDEX IND_ESTADO;
 DROP INDEX IND_EJECUCION_VEHICULO_FECHA;
 DROP INDEX IND_EJECUCION_VEHICULO_RUTA;
+--Drops funciones y procedimientos--
+DROP FUNCTION CalcularHorasTotales;
+DROP FUNCTION ObtenerEntregados;
+DROP PROCEDURE ListarVehiculosConEntregas;
+DROP PROCEDURE ActualizarEnvioAEntregado;
+DROP PROCEDURE AsignarConductorAVehiculo;
+DROP PROCEDURE RegistrarEjecucionRuta;
+DROP FUNCTION ObtenerPesoTotalVehiculo;
+DROP FUNCTION ObtenerCantPendienteClientes;
+DROP FUNCTION VehiculoDisponible;
 
 --CREACION TABLAS--
 CREATE TABLE GPS
