@@ -148,7 +148,7 @@ BEGIN
     -- Verificar existencia del vehículo con cursor
     OPEN c_verif_vehiculo;
     FETCH c_verif_vehiculo INTO v_vehiculo_existe;
-    CLOSE c_verif_vehiculo;
+    CLOSE c_verif_vehiculo; --se cierra aqui pq ya no haria falta despues
     IF v_vehiculo_existe = 0 THEN
         RAISE_APPLICATION_ERROR(-20010, 'Error: El vehículo ' || p_id_vehiculo || ' no existe.');
     END IF;
@@ -395,6 +395,7 @@ BEGIN
 
 END;
 /
+
 
 
 
